@@ -51,6 +51,7 @@ void	free_map_len(t_filler *map, int len)
 	while (0 <= --j && map->card)
 		ft_memdel((void **)&map->card[len]);
 	ft_memdel((void **)&map->card);
+	
 	while (0 <= --j && map->tetr)
 		ft_memdel((void **)&map->tetr[len]);
 	ft_memdel((void **)&map->tetr);
@@ -66,7 +67,7 @@ int		get_player(void)
 
 	if (1 != get_next_line(0, &output))
 	{
-		//free(output);
+		free(output);
 		return (-1);
 	}
 	if (ft_strlen(output) < 18)
