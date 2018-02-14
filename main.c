@@ -66,7 +66,7 @@ int		get_player(void)
 
 	if (1 != get_next_line(0, &output))
 	{
-		//free(output);
+		free(output);
 		return (-1);
 	}
 	if (ft_strlen(output) < 18)
@@ -116,7 +116,7 @@ int 	build_map(t_filler *map)
 			//free(output);
 			return (-1);
 		}
-		fprintf(stderr, "map %s\n", map->card[i]);
+		//fprintf(stderr, "map %s\n", map->card[i]);
 		free(output);
 	}
 	map->card[map->hcard] = NULL;
@@ -131,11 +131,12 @@ int		parse_map(t_filler *map)
 	char	*param;
 	//char	*output;
 
-	int start = clock();
+	//int start = clock();
 
 	if (1 != get_next_line(0, &param))
 	{
 		//fprintf(stderr, "param %s\n", output);
+		free(param);
 		return (-1);
 	}
 	//param = output;
@@ -147,17 +148,20 @@ int		parse_map(t_filler *map)
 	map->wcard = ft_atoi(param + (8 + ft_int_length(map->hcard)));
 	free(param);
 	if (1 != get_next_line(0, &param))
+	{
+		free(param);
 		return (-1);
+	}
 	free(param);
 	if (build_map(map) == -1)
 	{
-		fprintf(stderr, "error build_map\n");
+		//fprintf(stderr, "error build_map\n");
 		return (-1);
 	}
 	//fprintf(stderr, "good\n");
 
-	int end = clock();
-	fprintf(stderr, "speed %f\n", ((float)end - start)/CLOCKS_PER_SEC);
+	//int end = clock();
+	//fprintf(stderr, "speed %f\n", ((float)end - start)/CLOCKS_PER_SEC);
 	return (0);
 }
 
@@ -183,7 +187,7 @@ int 	build_tetr(t_filler *map)
 			//free(output);
 			return (-1);
 		}
-		fprintf(stderr, "tetr %s\n", map->tetr[i]);
+		//fprintf(stderr, "tetr %s\n", map->tetr[i]);
 		free(output);
 	}
 	map->tetr[map->htetr] = NULL;
@@ -211,7 +215,7 @@ int		save_tetr(t_filler *map)
 			{
 				map->coords[z].x = j;
 				map->coords[z++].y = i;
-				fprintf(stderr, "tetr coords y %d x %d\n", j, i);
+				//fprintf(stderr, "tetr coords y %d x %d\n", j, i);
 			}			
 		}		
 		j = -1;
@@ -227,7 +231,10 @@ int		parse_tetr(t_filler *map)
 	if (1 != get_next_line(0, &output))
 		return (-1);	
 	if (!ft_strstr(output, "Piece"))
+	{
+		free(output);
 		return (-1);	
+	}
 	map->htetr = ft_atoi(output + 6);
 	map->wtetr = ft_atoi(output + (6 + ft_int_length(map->htetr)));
 	free(output);
@@ -256,9 +263,9 @@ int 	try_fit_tetr(t_filler *map, t_place *try_fit, char plr)
 	nbr = 0;
 	while (map->coords[++i].x != -1)
 	{
-		if (map->coords[i].y + try_fit->y >= map->hcard || map->coords[i].x + try_fit->x >= map->wcard)
-			return (0);
 		if (map->coords[i].y + try_fit->y < 0 || map->coords[i].x + try_fit->x < 0)
+			return (0);		
+		if (map->coords[i].y + try_fit->y >= map->hcard || map->coords[i].x + try_fit->x >= map->wcard)
 			return (0);
 		else if (map->card[map->coords[i].y + try_fit->y][map->coords[i].x + try_fit->x] == plr - 32)
 		{
@@ -307,14 +314,13 @@ t_place		*try_that(t_place *strt, t_place *finder, t_filler *map, char plr)
 	{
 		while (tmp_check.x < map->wcard)
 		{
-			
-			//try_fit.x = tmp_check.x - map->coords[0].x;
-			try_fit.x = tmp_check.x - minus_x(map->coords); 
+			//try_fit.x = tmp_check.x - minus_x(map->coords);
+			try_fit.x = tmp_check.x - map->coords[0].x;			
 			try_fit.y = tmp_check.y - map->coords[0].y;
-			//fprintf(stderr, "*try_that try_fit.y %d try_fit.x %d\n", try_fit.y, try_fit.x);
+			//fprintf(stderr, "*try_that try_fit.y %d try_fit.x %d minus_x(map->coords) %d map->coords[0].y %d\n", try_fit.y, try_fit.x, minus_x(map->coords), map->coords[0].y);
 			if (try_fit_tetr(map, &try_fit, plr))
 			{
-				fprintf(stderr, "!!!!!!!!!(next_possible_pos)yes try_that try_fit.y %d try_fit.x %d\n", try_fit.y, try_fit.x);
+				//fprintf(stderr, "!!!!!!!!!(next_possible_pos)yes try_that try_fit.y %d try_fit.x %d\n", try_fit.y, try_fit.x);
 				//*finder = try_fit;
 				*strt = tmp_check;
 				*finder = try_fit;				
@@ -395,7 +401,7 @@ int		distance(t_place *finder, t_filler *map, char plr2)
 			{
 				if (map->card[tmp.y][tmp.x] == plr2)
 				{
-					fprintf(stderr, "(enemy) tmp.y %d tmp.x  %d (MY Attempt) finder->y %d finder->x %d\n", tmp.y, tmp.x, finder->y, finder->x);
+					//fprintf(stderr, "(enemy) tmp.y %d tmp.x  %d (MY Attempt) finder->y %d finder->x %d\n", tmp.y, tmp.x, finder->y, finder->x);
 					ret = euclidian_dist(finder, &map->coords[i], &tmp);
 					return (ret);
 				}
@@ -465,21 +471,182 @@ int 	calc_sides_enemy(t_place *finder, t_filler *map, char plr2)
 
 	diag = calc_diag_sides(finder, map, plr2);
 	sides = calc_side(finder, map, plr2);
-		fprintf(stderr, "calc_sides_enemy diag %d sides %d\n", diag, sides);
+		//fprintf(stderr, "calc_sides_enemy diag %d sides %d\n", diag, sides);
 	return (diag < sides ? diag : sides);
+}
+
+int 	calc_width(t_place *finder, t_filler *map)
+{
+	int 	i;
+	int 	bigval;
+	int 	lowval;
+
+	i = -1;
+	lowval = 2147483647;
+	bigval = 0;
+	while (map->coords[++i].x != -1)
+	{
+		if (lowval > map->coords[i].x + finder->x)
+			lowval = map->coords[i].x + finder->x;
+		if (bigval < map->coords[i].x + finder->x)
+			bigval = map->coords[i].x + finder->x;
+	}
+	bigval = map->wcard - bigval;
+	return (lowval < bigval ? lowval : bigval);
+}
+
+int 	calc_height(t_place *finder, t_filler *map)
+{
+	int 	i;
+	int 	bigval;
+	int 	lowval;
+
+	i = -1;
+	lowval = 2147483647;
+	bigval = 0;
+	while (map->coords[++i].x != -1)
+	{
+		if (lowval > map->coords[i].y + finder->y)
+			lowval = map->coords[i].y + finder->y;
+		if (bigval < map->coords[i].y + finder->y)
+			bigval = map->coords[i].y + finder->y;
+	}
+	bigval = map->hcard - bigval;
+	return (lowval < bigval ? lowval : bigval);
+}
+
+
+int 	direct_score(t_place *finder, t_filler *map)
+{
+	int 	width;
+	int 	height;
+
+	width = calc_width(finder, map);
+	height = calc_height(finder, map);
+		fprintf(stderr, "width %d height %d\n", width, height);
+	return (width < height ? width : height);
+}
+
+int		plr_euclidian_dist(t_place *res, t_place *tetri, t_place *tmp)
+{
+	int 	y;
+	int 	x;
+	int 	sqrt;
+
+	//fprintf(stderr, "** tmp.y %d tmp.x  %d res->y %d res->x %d tetri.y %d tetri.x %d\n", tmp->y, tmp->x, res->y, res->x, tetri->y, tetri->x);
+	y = ft_power((res->y + tetri->y) - tmp->y, 2);
+	x = ft_power((res->x + tetri->x) - tmp->x, 2);
+	//fprintf(stderr, "y %d x %d\n", y, x);
+	sqrt = ft_sqrt(y + x);
+	return (sqrt);
+}
+
+int 	find_min_plr_side(int val, t_place *finder, t_place *coords, t_place *tetri)
+{
+	int 	nbr;
+
+	nbr = plr_euclidian_dist(finder, coords, tetri);
+	//fprintf(stderr, "%s\n", );
+	return (nbr < val ? nbr : val);
+}
+
+int 	calc_up_down(t_place *finder, t_filler *map, char plr)
+{
+	int 	i;
+	int 	j;
+	int 	val;
+	t_place coord;
+	t_place jj;
+
+	i = -1;
+	jj = *finder;
+	val = 6666;
+	while (map->coords[++i].x != -1)
+	{
+		j = -1;
+		coord.y = 0;
+		while (++j <= 1)
+		{
+			coord.x = -1;
+			while (coord.x++ < map->wcard - 1)
+			{
+				if (map->card[coord.y][coord.x] == plr)
+				{
+					//fprintf(stderr, "map->card[coord.y][coord.x] coord.y %d coord.x %d\n", coord.y, coord.x);
+					val = find_min_plr_side(val, finder, &map->coords[i], &coord);
+				}
+			}
+			coord.y = map->hcard - 1;
+		}
+	}
+	return (val);	
+}
+
+int 	calc_left_right(t_place *finder, t_filler *map, char plr)
+{
+	int 	i;
+	int 	j;
+	int 	val;
+	t_place coord;
+	t_place jj;
+
+	i = -1;
+	jj = *finder;
+	val = 6666;
+	while (map->coords[++i].x != -1)
+	{
+		j = -1;
+		coord.x = 0;
+		while (++j <= 1)
+		{
+			coord.y = -1;
+			while (coord.y++ < map->hcard - 1)
+			{
+				if (map->card[coord.y][coord.x] == plr)
+				{
+					//fprintf(stderr, "map->card[coord.y][coord.x] coord.y %d coord.x %d\n", coord.y, coord.x);
+					val = find_min_plr_side(val, finder, &map->coords[i], &coord);
+					//fprintf(stderr, "yo val %d\n", val);
+				}
+			}
+			coord.x = map->wcard - 1;
+		}
+	}
+	return (val);
+}
+
+int 	margin_score(t_place *finder, t_filler *map, char plr)
+{
+	int 	one;
+	int 	two;
+
+	one = calc_up_down(finder, map, plr);
+	two = calc_left_right(finder, map, plr);
+
+	return (one < two ? one : two);
 }
 
 int 	counter(t_place *finder, t_filler *map, char plr)
 {
-	int 	dist;
-	int 	sides;
+	int 	dist_enemy;
+	int 	enemy_neybor;
+	//int 	direct;
+	//int 	margin_to_my;
+	int 	res;
 
-	dist = distance(finder, map, (plr == 'o' ? 'X' : 'O'));
-		fprintf(stderr, "counter dist %d\n", dist);
-	sides = calc_sides_enemy(finder, map, (plr == 'o' ? 'X' : 'O'));
-		fprintf(stderr, "counter sides %d\n", sides);
+	dist_enemy = distance(finder, map, (plr == 'o' ? 'X' : 'O'));
+		//fprintf(stderr, "counter dist_enemy %d\n", dist_enemy);
+	enemy_neybor = calc_sides_enemy(finder, map, (plr == 'o' ? 'X' : 'O'));
+		//fprintf(stderr, "counter enemy_neybor %d\n", enemy_neybor);
+	//direct = direct_score(finder, map);
+	//	fprintf(stderr, "counter direct %d\n", direct);
+	//margin_to_my = margin_score(finder, map, plr - 32);
+	//	fprintf(stderr, "counter margin_to_my %d\n", margin_to_my);
+	res = enemy_neybor;
+	if (res == 0)
+		res = -dist_enemy;
 
-	return (dist);
+	return (res);
 }
 
 int		check_position(t_place *place, t_place *find, t_filler *map, char plr)
@@ -512,10 +679,10 @@ int		check_position(t_place *place, t_place *find, t_filler *map, char plr)
 	count = counter(&finder, map, plr);
 
 	val = check_position(&strt, find, map, plr);
-		fprintf(stderr, "val %d\n", val);
+		//fprintf(stderr, "val %d\n", val);
 	if (count >= val)
 	{
-		fprintf(stderr, "@@@check_position ret finder.y %d finder.x %d | count %d val %d\n", finder.y, finder.x, count, val);
+		//fprintf(stderr, "@@@check_position ret finder.y %d finder.x %d | count %d val %d\n", finder.y, finder.x, count, val);
 		*find = finder;		
 		return (count);
 	}
@@ -534,7 +701,7 @@ int		main(void)
 	find.x = 0;
 	if ((plr = get_player()) < 0)
 		return (-1);
-	fprintf(stderr, "plr %c\n", plr);
+	//fprintf(stderr, "plr %c\n", plr);
 	/*if (parse_map(&map))
 	{
 		fprintf(stderr, "okkk\n");
@@ -546,8 +713,8 @@ int		main(void)
 	
 		place.y = 0;
 		place.x = -1;
-		fprintf(stderr, "go\n");
-		if (check_position(&place, &find, &map, plr) != -666)
+		//fprintf(stderr, "go\n");
+		if (check_position(&place, &find, &map, plr))
 		{
 			ft_putnbr(find.y);
 			ft_putchar(' ');
