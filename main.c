@@ -51,6 +51,7 @@ void	free_map_len(t_filler *map, int len)
 	while (0 <= --j && map->card)
 		ft_memdel((void **)&map->card[len]);
 	ft_memdel((void **)&map->card);
+	
 	while (0 <= --j && map->tetr)
 		ft_memdel((void **)&map->tetr[len]);
 	ft_memdel((void **)&map->tetr);
