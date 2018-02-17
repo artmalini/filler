@@ -11,9 +11,8 @@
 # **************************************************************************** #
 
 NAME  = amakhiny.filler
-INC	  = -I ./libft -I ./includes
+INC	  = -I ./libft -I ./includes -I ./visual
 FLAGS = -Wall -Wextra -Werror
-LIBFT = libft/libft.a
 
 MAIN_FILE  = main.c
 #FILL_FILES = ft_filler.c	
@@ -33,6 +32,7 @@ all: $(NAME)
 $(NAME): $(MAIN_O)
 	@echo " $(GREEN)Compiling....."
 	@make -o1 -C libft
+	@make -C visual
 	@gcc -o $(NAME) $(FLAGS) $(INC) $(MAIN_O) $(LIBFT_A)
 	#@echo " $(CYAN)$(NAME) $(GREY)generated \xF0\x9F\x98\xBA"
 
@@ -42,11 +42,13 @@ $(NAME): $(MAIN_O)
 clean:
 	@/bin/rm -f $(OBJ)
 	@make -C libft clean
+	@make -C visual clean
 	@echo " $(RED)All objects has been deleteted!"
 
 fclean: clean
 	@/bin/rm -f $(NAME)
 	@make -C libft fclean
+	@make -C visual fclean
 	@echo " $(RED)$(NAME)$(GREY) has been deleteted!"
 
 re: fclean all

@@ -729,11 +729,12 @@ int		main(void)
 			ft_putchar('\n');
 		}
 		free_map(&map);
+
 	}
 	
 	
 	//system("leaks amakhiny.filler");
 	//fprintf(stderr, "plr %d\n", plr);
-
+	// ./filler_vm -f maps/map00 -p1 ./amakhiny.filler -p2 players/hcao.filler > txx
 	return (0);
 }
