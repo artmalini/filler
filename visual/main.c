@@ -3,7 +3,7 @@
 #include <stdio.h>
 /*
 == O fin: 123
-== X fin: 46
+== X fin:  46
 */
 typedef struct 	s_viz
 {
