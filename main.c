@@ -5,6 +5,9 @@
 #include <stdio.h>
 
 #include <time.h>
+
+
+
 typedef struct  s_coords
 {
 	int			y;
@@ -110,11 +113,15 @@ int 	build_map(t_filler *map)
 		//if (1 != get_next_line(0, &output))
 		//	return (-1);
 		if(ft_strlen(output) != strlen)
+		{
+			free_map_len(map, i);
+			free(output);			
 			return (-1);
+		}
 		if (!(map->card[i] = ft_strdup(output + 4)))
 		{
-			//free_map_len(map, i);
-			//free(output);
+			free_map_len(map, i);
+			free(output);
 			return (-1);
 		}
 		//fprintf(stderr, "map %s\n", map->card[i]);
@@ -124,7 +131,7 @@ int 	build_map(t_filler *map)
 	//fprintf(stderr, "i %d\n", i);
 	if (i != map->hcard)
 		return (-1);
-	return (1);
+	return (0);
 }
 
 int		parse_map(t_filler *map)
@@ -181,11 +188,15 @@ int 	build_tetr(t_filler *map)
 	while (++i < map->htetr && get_next_line(0, &output) == 1)
 	{
 		if(ft_strlen(output) != strlen)
+		{
+			free_map_len(map, i);
+			free(output);			
 			return (-1);
+		}
 		if (!(map->tetr[i] = ft_strdup(output)))
 		{
-			//free_map_len(map, i);
-			//free(output);
+			free_map_len(map, i);
+			free(output);
 			return (-1);
 		}
 		//fprintf(stderr, "tetr %s\n", map->tetr[i]);
@@ -279,7 +290,7 @@ int 	try_fit_tetr(t_filler *map, t_place *try_fit, char plr)
 	return (nbr == 1 ? 1 : 0);
 }
 
-int 	minus_x(t_place *coords)
+/*int 	minus_x(t_place *coords)
 {
 	int 	i;
 	int 	x;
@@ -296,7 +307,7 @@ int 	minus_x(t_place *coords)
 		//}
 	}
 	return (x);
-}
+}*/
 
 t_place		*try_that(t_place *strt, t_place *finder, t_filler *map, char plr)
 {
@@ -412,7 +423,7 @@ int		distance(t_place *finder, t_filler *map, char plr2)
 			tmp.y++;
 		}
 	}
-	return (-666);
+	return (-1000);
 }
 
 int 	calc_diag_sides(t_place *finder, t_filler *map, char plr2)
@@ -483,7 +494,7 @@ int 	calc_width(t_place *finder, t_filler *map)
 	int 	lowval;
 
 	i = -1;
-	lowval = 2147483647;
+	lowval = 6666;
 	bigval = 0;
 	while (map->coords[++i].x != -1)
 	{
@@ -503,7 +514,7 @@ int 	calc_height(t_place *finder, t_filler *map)
 	int 	lowval;
 
 	i = -1;
-	lowval = 2147483647;
+	lowval = 6666;
 	bigval = 0;
 	while (map->coords[++i].x != -1)
 	{
@@ -527,6 +538,15 @@ int 	direct_score(t_place *finder, t_filler *map)
 		fprintf(stderr, "width %d height %d\n", width, height);
 	return (width < height ? width : height);
 }
+
+
+
+
+
+
+
+
+
 
 int		plr_euclidian_dist(t_place *res, t_place *tetri, t_place *tmp)
 {
@@ -676,7 +696,7 @@ int		check_position(t_place *place, t_place *find, t_filler *map, char plr)
 		strt.x += 1;
 	//min_count = 0;
 	if (try_that(&strt, &finder, map, plr) == NULL)
-		return (-666);
+		return (-1000);
 	count = counter(&finder, map, plr);
 
 	val = check_position(&strt, find, map, plr);
@@ -715,7 +735,7 @@ int		main(void)
 		place.y = 0;
 		place.x = -1;
 		//fprintf(stderr, "go\n");
-		if (check_position(&place, &find, &map, plr))
+		if (check_position(&place, &find, &map, plr) != -1000)
 		{
 			ft_putnbr(find.y);
 			ft_putchar(' ');

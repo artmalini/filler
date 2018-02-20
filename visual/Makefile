@@ -9,7 +9,7 @@ OBJ = $(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	gcc -o $(NAME) $(FLAGS) $(OBJ) -L../includes/mlx/ -lmlx -framework OpenGL -framework AppKit ../libft/libft.a
+	gcc -o $(NAME) $(FLAGS) $(OBJ) -L../elcapitan/ -lmlx -framework OpenGL -framework AppKit ../libft/libft.a
 	echo "visual done"
 
 clean:

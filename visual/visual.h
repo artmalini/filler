@@ -4,7 +4,7 @@
 //# include "../libft/libft.h"
 # include "../includes/filler.h"
 
-# define WIDTH 1200
-# define HEIGHT 600
+# define WIDTH 700
+# define HEIGHT 700
 
 #endif
