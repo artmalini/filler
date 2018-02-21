@@ -13,7 +13,8 @@
 NAME = libft.a
 GC = gcc
 CFLAGS = -c -Wall -Wextra -Werror -I libft.h
-SOURCE = *.c
+SOURCE = ft_strlen.c ft_strstr.c ft_memdel.c ft_bzero.c ft_strdup.c ft_putnbr.c ft_putchar.c ft_strjoin.c ft_strnew.c ft_memalloc.c \
+		ft_strcpy.c ft_strdel.c ft_strsub.c ft_minint.c ft_strchr.c ft_int_length.c ft_atoi.c ft_itoa.c get_next_line.c
 OBJ = $(SOURCE:.c=.o)
 
 all: $(NAME)

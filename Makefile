@@ -30,17 +30,17 @@ LIBFT_A = -L libft -lft
 all: $(NAME)
 
 $(NAME): $(MAIN_O)
-	@echo " $(GREEN)Compiling....."
-	@make -o1 -C libft
-	@make -C visual
+	@echo " $(GREEN)Compiling.....$(GREY)"
+	@make -C libft	
+	@make -C visual	
 	@gcc -o $(NAME) $(FLAGS) $(INC) $(MAIN_O) $(LIBFT_A)
-	#@echo " $(CYAN)$(NAME) $(GREY)generated \xF0\x9F\x98\xBA"
+	@echo " $(GREEN)Let's play $(CYAN)$(NAME) $(GREY)generated \xF0\x9F\x98\xBA"
 
 %.o: %.c
 	@gcc $(FLAGS) $(INC) -c -o $@ $<
 
 clean:
-	@/bin/rm -f $(OBJ)
+	@/bin/rm -f $(MAIN_O)
 	@make -C libft clean
 	@make -C visual clean
 	@echo " $(RED)All objects has been deleteted!"
