@@ -62,39 +62,28 @@ void	free_map_len(t_filler *map, int len)
 	ft_memdel((void **)&map->coords);
 }
 
-
-
-int		get_player(void)
+int 	check_str_len(t_filler *map, char *output, size_t strlen, int i)
 {
-	char	*output;
+	if(ft_strlen(output) != strlen)
+	{
+		free_map_len(map, i);
+		free(output);
+		return (-1);
+	}
+	return (1);
+}
 
-	if (1 != get_next_line(0, &output))
-	{
-		free(output);
-		return (-1);
-	}
+
+int		get_player(char	*output)
+{
 	if (ft_strlen(output) < 18)
-	{
-		free(output);
 		return (-1);
-	}
-	
-	//fprintf(stderr, "plr str %s\n", plr);
 	if (ft_strstr(output, "p1"))
-	{
-		free(output);
 		return ('o');
-	}
 	else if (ft_strstr(output, "p2"))
-	{
-		free(output);
 		return ('x');
-	}
 	else
-	{
-		free(output);
 		return (-1);
-	}
 }
 
 int 	build_map(t_filler *map)
@@ -112,12 +101,8 @@ int 	build_map(t_filler *map)
 	{
 		//if (1 != get_next_line(0, &output))
 		//	return (-1);
-		if(ft_strlen(output) != strlen)
-		{
-			free_map_len(map, i);
-			free(output);			
+		if (!check_str_len(map, output, strlen, i))
 			return (-1);
-		}
 		if (!(map->card[i] = ft_strdup(output + 4)))
 		{
 			free_map_len(map, i);
@@ -187,12 +172,8 @@ int 	build_tetr(t_filler *map)
 		return (-1);	
 	while (++i < map->htetr && get_next_line(0, &output) == 1)
 	{
-		if(ft_strlen(output) != strlen)
-		{
-			free_map_len(map, i);
-			free(output);			
+		if (!check_str_len(map, output, strlen, i))
 			return (-1);
-		}
 		if (!(map->tetr[i] = ft_strdup(output)))
 		{
 			free_map_len(map, i);
@@ -647,7 +628,7 @@ int 	margin_score(t_place *finder, t_filler *map, char plr)
 	return (one < two ? one : two);
 }
 
-int 	counter(t_place *finder, t_filler *map, char plr)
+int 	count_position(t_place *finder, t_filler *map, char plr)
 {
 	int 	dist_enemy;
 	int 	enemy_neybor;
@@ -656,13 +637,13 @@ int 	counter(t_place *finder, t_filler *map, char plr)
 	int 	res;
 
 	dist_enemy = distance(finder, map, (plr == 'o' ? 'X' : 'O'));
-		//fprintf(stderr, "counter dist_enemy %d\n", dist_enemy);
+		//fprintf(stderr, "count_position dist_enemy %d\n", dist_enemy);
 	enemy_neybor = calc_sides_enemy(finder, map, (plr == 'o' ? 'X' : 'O'));
-		//fprintf(stderr, "counter enemy_neybor %d\n", enemy_neybor);
+		//fprintf(stderr, "count_position enemy_neybor %d\n", enemy_neybor);
 	//direct = direct_score(finder, map);
-	//	fprintf(stderr, "counter direct %d\n", direct);
+	//	fprintf(stderr, "count_position direct %d\n", direct);
 	//margin_to_my = margin_score(finder, map, plr - 32);
-	//	fprintf(stderr, "counter margin_to_my %d\n", margin_to_my);
+	//	fprintf(stderr, "count_position margin_to_my %d\n", margin_to_my);
 	res = enemy_neybor;
 	if (res == 0)
 		res = -dist_enemy;
@@ -697,7 +678,7 @@ int		check_position(t_place *place, t_place *find, t_filler *map, char plr)
 	//min_count = 0;
 	if (try_that(&strt, &finder, map, plr) == NULL)
 		return (-1000);
-	count = counter(&finder, map, plr);
+	count = count_position(&finder, map, plr);
 
 	val = check_position(&strt, find, map, plr);
 		//fprintf(stderr, "val %d\n", val);
@@ -711,51 +692,51 @@ int		check_position(t_place *place, t_place *find, t_filler *map, char plr)
 	return (val);
 }
 
-int		main(void)
+void	filler_print(int y, int x)
 {
-	char		plr;
+	ft_putnbr(y);
+	ft_putchar(' ');
+	ft_putnbr(x);
+	ft_putchar('\n');	
+}
+
+int 	parse_param(char plr)
+{
 	t_filler	map;
 	t_place		place;
 	t_place		find;
 
 	find.y = 0;
 	find.x = 0;
-	if ((plr = get_player()) < 0)
-		return (-1);
-	//fprintf(stderr, "plr %c\n", plr);
-	/*if (parse_map(&map))
-	{
-		fprintf(stderr, "okkk\n");
-	}*/
-	//if (parse_tetr(&map))
-	//	fprintf(stderr, "okkk\n");
 	while (parse_map(&map) > -1 && parse_tetr(&map) > -1)
 	{
-	
 		place.y = 0;
 		place.x = -1;
-		//fprintf(stderr, "go\n");
 		if (check_position(&place, &find, &map, plr) != -1000)
-		{
-			ft_putnbr(find.y);
-			ft_putchar(' ');
-			ft_putnbr(find.x);
-			ft_putchar('\n');
-		}
+			filler_print(find.y, find.x);
 		else
-		{
-			ft_putnbr(0);
-			ft_putchar(' ');
-			ft_putnbr(0);
-			ft_putchar('\n');
-		}
+			filler_print(0, 0);
 		free_map(&map);
-
 	}
-	
-	
-	//system("leaks amakhiny.filler");
-	//fprintf(stderr, "plr %d\n", plr);
-	// ./filler_vm -f maps/map00 -p1 ./amakhiny.filler -p2 players/hcao.filler > txx
+	return (0);
+}
+
+int		main(void)
+{
+	char		plr;
+	char 		*output;
+
+	if (1 != get_next_line(0, &output))
+	{
+		free(output);
+		return (-1);
+	}
+	if ((plr = get_player(output)) < 0)
+	{
+		free(output);
+		return (-1);
+	}
+	free(output);
+	parse_param(plr);
 	return (0);
 }

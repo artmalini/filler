@@ -94,6 +94,17 @@ void	get_vis_player(char *output, t_vis *mp)
 	}
 }
 
+int 	check_str_len(t_vis *mp, char *param, size_t strlen, int i)
+{
+	if(ft_strlen(param) != strlen)
+	{
+		free_map_len(mp, i);
+		free(param);
+		return (-1);
+	}
+	return (1);
+}
+
 int 	build_vis_map(t_vis *mp)
 {
 	int 	i;
@@ -108,12 +119,8 @@ int 	build_vis_map(t_vis *mp)
 	while (++i < mp->hcard && get_next_line(0, &param) > 0)
 	{
 		//fprintf(stderr, "param %s\n", param);
-		if(ft_strlen(param) != strlen)
-		{
-			free_map_len(mp, i);
-			free(param);
+		if (!check_str_len(mp, param, strlen, i))
 			return (-1);
-		}
 		if (!(mp->card[i] = ft_strdup(param + 4)))
 		{
 			free_map_len(mp, i);

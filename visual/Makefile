@@ -10,7 +10,6 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	gcc -o $(NAME) $(FLAGS) $(OBJ) -L../elcapitan/ -lmlx -framework OpenGL -framework AppKit ../libft/libft.a
-	echo "visual done"
 
 clean:
 	rm -f $(OBJ)
@@ -19,3 +18,5 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+.PHONY: all clean fclean re
