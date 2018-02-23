@@ -152,10 +152,7 @@ int		get_vis_map(char *output, t_vis *mp)
 void 	find_error(t_vis *mp, char *output)
 {
 	if (ft_strstr(output, "error on input") || ft_strstr(output, "timedout"))
-	{
-		//fprintf(stderr, "@@@@output %s\n", output);
 		mp->err = 0;
-	}
 	else
 		mp->err = 1;
 }
@@ -181,7 +178,6 @@ int		get_input(t_vis *mp)
 			free(output);
 			return (0);
 		}
-		//fprintf(stderr, "output %s\n", output);
 		free(output);
 	}
 	return (0);
